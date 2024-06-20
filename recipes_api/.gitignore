@@ -1,0 +1,23 @@
+# Arquivos de sistema
+*.pyc
+__pycache__/
+
+# Ambiente virtual Python (por exemplo, virtualenv, pipenv)
+venv/
+env/
+
+# Arquivos de log
+*.log
+
+# Arquivos de configuração
+*.ini
+*.cfg
+
+# Arquivos de cache
+*.cache
+
+# Arquivos gerados pelo usuário
+.idea/
+
+# Outros
+*.DS_Store
