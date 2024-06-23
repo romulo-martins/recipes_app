@@ -15,7 +15,8 @@ def get_recipes():
         recipe_data = {'id': recipe.id,
                        'title': recipe.title,
                        'ingredients': recipe.ingredients,
-                       'instructions': recipe.instructions}
+                       'instructions': recipe.instructions,
+                       'image': recipe.image}
         output.append(recipe_data)
     return jsonify({'recipes': output})
 
@@ -27,7 +28,8 @@ def get_recipe():
     recipe = session.query(Recipe).filter(Recipe.id == recipe_id).first()
     return jsonify({'title': recipe.title,
                     'ingredients': recipe.ingredients,
-                    'instructions': recipe.instructions})
+                    'instructions': recipe.instructions,
+                    'image': recipe.image})
 
 
 @app.post('/recipes', tags=[recipe_tag])

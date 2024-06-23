@@ -10,9 +10,14 @@ class Recipe(Base):
     title = Column(String(100), nullable=False)
     ingredients = Column(Text)
     instructions = Column(Text)
+    image = Column(Text)
     
-    def __init__(self, title:str, ingredients:str,
-                 instructions:str, created_at:Union[DateTime, None] = None):
+    def __init__(self, 
+                 title:str, 
+                 ingredients:str,
+                 instructions:str, 
+                 image:str = None, 
+                 created_at:Union[DateTime, None] = None):
         """
         Cria uma receita (Recipe)
 
@@ -25,6 +30,9 @@ class Recipe(Base):
         self.title = title
         self.ingredients = ingredients
         self.instructions = instructions
+
+        if image:
+            self.image = image
 
         if created_at:
             self.created_at = created_at
