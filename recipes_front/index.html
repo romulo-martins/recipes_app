@@ -1,57 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Recipes App</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header>
-      <h1>Recipe Book App</h1>
-    </header>
 
-    <div class="container">
-      <ul id="recipe-list" class="recipe-list">
-        <!-- <li class="recipe-item">
-          <img
-            src="https://spoonacular.com/recipeImages/12345-312x231.jpg"
-            alt="Recipe 1"
-          />
-          <h2>Recipe 1</h2>
-          <p>
-            <strong>Ingredients:</strong> Ingredient 1, Ingredient 2, Ingredient
-            3
-          </p>
-          <a href="#">View Recipe</a>
-        </li>
-        <li class="recipe-item">
-          <img
-            src="https://spoonacular.com/recipeImages/12545-312x231.jpg"
-            alt="Recipe 2"
-          />
-          <h2>Recipe 2</h2>
-          <p>
-            <strong>Ingredients:</strong> Ingredient 1, Ingredient 2, Ingredient
-            3
-          </p>
-          <a href="#">View Recipe</a>
-        </li>
-        <li class="recipe-item">
-          <img
-            src="https://spoonacular.com/recipeImages/12445-312x231.jpg"
-            alt="Recipe 3"
-          />
-          <h2>Recipe 3</h2>
-          <p>
-            <strong>Ingredients:</strong> Ingredient 1, Ingredient 2, Ingredient
-            3
-          </p>
-          <a href="#">View Recipe</a>
-        </li> -->
-      </ul>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipes App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Suas receitas favoritas</h1>
+  </header>
+
+  <div class="container">
+    <div class="top-container">
+      <button onclick="openModal()" class="btn btn-create">Nova receita</button>
     </div>
-    <script src="scripts.js"></script>
-  </body>
+
+
+    <ul id="recipe-list" class="recipe-list">
+    </ul>
+
+    <div class="modal-container">
+      <div class="modal">
+        <form class="form">
+          <div class="form-group">
+            <label for="m-title">Nome:</label>
+            <input type="text" id="m-title" name="m-title" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="m-ingredients">Ingredientes:</label>
+            <input type="text" id="m-ingredients" name="m-ingredients" class="form-control" rows="4" required>
+          </div>
+          <div class="form-group">
+            <label for="m-instructions">Instrucões:</label>
+            <textarea id="m-instructions" name="m-instructions" class="form-control" rows="4" required></textarea>
+          </div>
+          <button type="submit" id="btnSave" class="btn btn-create">Salvar</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <script src="scripts.js"></script>
+</body>
+
 </html>
