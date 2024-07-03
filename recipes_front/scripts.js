@@ -1,24 +1,3 @@
-let recipesData = [
-  {
-    "title": "Pão de Queijo",
-    "ingredients": "500g de polvilho doce, 250g de queijo minas padrão ralado, 2 ovos, 1 xícara de leite, 1/2 xícara de óleo, sal a gosto",
-    "instructions": "Misture todos os ingredientes em uma tigela até obter uma massa homogênea. Modele os pãezinhos e leve ao forno preaquecido a 180°C por cerca de 25 minutos ou até dourar.",
-    "image": "pao_de_queijo.jpg"
-  },
-  {
-    "title": "Risoto de Funghi",
-    "ingredients": "1 xícara de arroz arbóreo, 100g de cogumelos funghi secos, 1 cebola picada, 2 dentes de alho picados, 1/2 xícara de vinho branco seco, 1,5 litros de caldo de legumes, 2 colheres de sopa de manteiga, 1/2 xícara de queijo parmesão ralado, sal e pimenta a gosto",
-    "instructions": "Hidrate os cogumelos em água morna por 30 minutos. Refogue a cebola e o alho na manteiga até dourarem. Adicione o arroz e refogue por mais alguns minutos. Acrescente o vinho branco e mexa até evaporar. Adicione os cogumelos escorridos e picados. Aos poucos, vá adicionando o caldo de legumes, mexendo sempre até que o arroz esteja al dente e cremoso. Finalize com o queijo parmesão, ajuste o sal e a pimenta e sirva.",
-    "image": "risoto_de_funghi.jpg"
-  },
-  {
-    "title": "Salada de Quinoa",
-    "ingredients": "1 xícara de quinoa cozida, 1 pepino em cubos, 1 tomate em cubos, 1 pimentão vermelho em cubos, 1/2 cebola roxa picada, suco de 1 limão, 2 colheres de sopa de azeite de oliva, sal e pimenta-do-reino a gosto, folhas de hortelã a gosto",
-    "instructions": "Em uma tigela, misture todos os ingredientes. Tempere com suco de limão, azeite, sal, pimenta e folhas de hortelã picadas. Sirva gelada.",
-    "image": "salada_de_quinoa.jpg"
-  }
-]
-
 // ======================= Constantes ===========================
 
 const modal = document.querySelector('.modal-container')
@@ -28,6 +7,7 @@ const sIngredients = document.querySelector('#m-ingredients')
 const sInstructions = document.querySelector('#m-instructions')
 const btnSavae = document.querySelector('#btnSave')
 const recipeListEl = document.getElementById("recipe-list");
+const BASE_URL = 'http://localhost:5000'
 
 // ======================= Logic =================================
 
@@ -40,16 +20,6 @@ function openModal(edit = false, index = 0) {
     }
   }
 
-  // if (edit) {
-  //   sTitle.value = itens[index].title
-  //   sIngredients.value = itens[index].ingredients
-  //   sInstructions.value = itens[index].instructions
-  //   id = index
-  // } else {
-  //   sTitle.value = ''
-  //   sIngredients.value = ''
-  //   sInstructions.value = ''
-  // }
   sTitle.value = ''
   sIngredients.value = ''
   sInstructions.value = ''
@@ -57,7 +27,7 @@ function openModal(edit = false, index = 0) {
 
 function displayRecipes(recipes) {
   recipeListEl.innerHTML = "";
-  recipes.forEach((recipe, index) => {
+  recipes.forEach((recipe) => {
     const recipeItemEl = document.createElement("li");
     recipeItemEl.classList.add("recipe-item");
     // create image field
@@ -75,8 +45,8 @@ function displayRecipes(recipes) {
 
     recipeActionsEl = document.createElement("div")
     recipeActionsEl.innerHTML = `    
-    <button onclick="editItem(${index})" class='btn btn-edit'>Editar</button>
-    <button onclick="deleteItem(${index})" class='btn btn-delete'>Deletar</button>
+    <button onclick="editItem(${recipe.id})" class='btn btn-edit'>Editar</button>
+    <button onclick="deleteItem(${recipe.id})" class='btn btn-delete'>Deletar</button>
     `
 
     recipeItemEl.appendChild(recipeImageEl);
@@ -87,71 +57,66 @@ function displayRecipes(recipes) {
   });
 }
 
-btnSave.onclick = e => {
+btnSave.onclick = async (event) => {
   if (sTitle.value == '' || sIngredients.value == '' || sInstructions.value == '') {
     return
   }
 
-  e.preventDefault();
-
-  // if (id !== undefined) {
-  //   itens[id].title = sTitle.value
-  //   itens[id].ingredients = sIngredients.value
-  //   itens[id].instructions = sInstructions.value
-  // } else {
-  //   itens.push({
-  //     'title': sTitle.value,
-  //     'ingredients': sIngredients.value,
-  //     'instructions': sInstructions.value
-  //   })
-  // }
+  event.preventDefault();
 
   let newRecipe = {
     'title': sTitle.value,
     'ingredients': sIngredients.value,
     'instructions': sInstructions.value
   }
-
-  createRecipe(newRecipe);
+  await createRecipe(newRecipe);
 
   modal.classList.remove('active')
   init()
-  id = undefined
 }
 
-function deleteItem(index) {
-  deleteRecipe(index)
-  console.log(`deleteRecipe: ${recipesData}`)
-  init()
-  console.log(`init: ${recipesData}`)
+async function deleteItem(recipeId) {
+  await deleteRecipe(recipeId);
+  init();
 }
 
 
 // ================== Controllers ==========================
 
 async function getRecipes() {
-  // const response = await fetch(
-  //   `http://localhost:5000/recipes`
-  // );
+  let url = `${BASE_URL}/recipes`;
+  const response = await fetch(url, {
+    method: 'GET'
+  });
 
-  // const data = await response.json();
-
-  // return data.recipes;
-  return recipesData; // TODO: remove this and back to the backend call
+  const data = await response.json();
+  return data.recipes;
 }
 
-function createRecipe(data) {
-  // TODO: change to delete on backend
+async function createRecipe(data) {
+  let url = `${BASE_URL}/recipes`;
 
-  recipesData.push(data);
+  console.log(JSON.stringify(data))
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  return response.json();
 }
 
-function deleteRecipe(index) {
-  // TODO: change to delete on backend
-  
-  console.log(index)
+async function deleteRecipe(recipeId) {
+  let url = `${BASE_URL}/recipes/${recipeId}`;
+  const response = await fetch(url, {
+    method: 'DELETE'
+  });
 
-  recipesData.splice(index, 1);
+  return response.json();
 }
 
 async function init() {
