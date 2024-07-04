@@ -94,7 +94,10 @@ btnSave.onclick = async (event) => {
 }
 
 async function deleteItem(recipeId) {
-  await deleteRecipe(recipeId);
+  const confirmed = confirm("Are you sure you want to delete this item?");
+  if(confirmed) {
+    await deleteRecipe(recipeId);
+  }
   init();
 }
 
