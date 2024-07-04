@@ -1,6 +1,7 @@
 // ======================= Constantes ===========================
 
 const modal = document.querySelector('.modal-container')
+const itemId = document.querySelector('#itemId')
 const tbody = document.querySelector('tbody')
 const sTitle = document.querySelector('#m-title')
 const sIngredients = document.querySelector('#m-ingredients')
@@ -11,18 +12,21 @@ const BASE_URL = 'http://localhost:5000'
 
 // ======================= Logic =================================
 
-function openModal(edit = false, index = 0) {
+function openModal(recipe = null) {
   modal.classList.add('active')
 
-  modal.onclick = e => {
-    if (e.target.className.indexOf('modal-container') !== -1) {
+  modal.onclick = event => {
+    if (event.target.className.indexOf('modal-container') !== -1) {
       modal.classList.remove('active')
     }
   }
 
-  sTitle.value = ''
-  sIngredients.value = ''
-  sInstructions.value = ''
+  if(recipe) {
+    itemId.value = recipe.id
+    sTitle.value = recipe.title
+    sIngredients.value = recipe.ingredients
+    sInstructions.value = recipe.instructions
+  }
 }
 
 function displayRecipes(recipes) {
@@ -30,10 +34,14 @@ function displayRecipes(recipes) {
   recipes.forEach((recipe) => {
     const recipeItemEl = document.createElement("li");
     recipeItemEl.classList.add("recipe-item");
+    
     // create image field
     recipeImageEl = document.createElement("img");
-    recipeImageEl.src = `img/${recipe.image}`;
     recipeImageEl.alt = "recipe image";
+    if(recipe.image) {
+      recipeImageEl.src = `img/${recipe.image}`;  
+    }
+
     // creates title field
     recipeTitleEl = document.createElement("h2");
     recipeTitleEl.innerText = recipe.title;
@@ -61,7 +69,6 @@ btnSave.onclick = async (event) => {
   if (sTitle.value == '' || sIngredients.value == '' || sInstructions.value == '') {
     return
   }
-
   event.preventDefault();
 
   let newRecipe = {
@@ -69,7 +76,18 @@ btnSave.onclick = async (event) => {
     'ingredients': sIngredients.value,
     'instructions': sInstructions.value
   }
-  await createRecipe(newRecipe);
+
+  if(itemId.value) {
+    newRecipe.id = itemId.value
+    await editRecipe(newRecipe)
+  } else {
+    await createRecipe(newRecipe);
+  }
+
+  itemId.value = ''
+  sTitle.value = ''
+  sIngredients.value = ''
+  sInstructions.value = ''
 
   modal.classList.remove('active')
   init()
@@ -80,6 +98,11 @@ async function deleteItem(recipeId) {
   init();
 }
 
+async function editItem(recipeId) {
+  let recipe = await getRecipe(recipeId)
+  recipe.id = recipeId
+  openModal(recipe);
+}
 
 // ================== Controllers ==========================
 
@@ -88,16 +111,21 @@ async function getRecipes() {
   const response = await fetch(url, {
     method: 'GET'
   });
-
   const data = await response.json();
   return data.recipes;
 }
 
+async function getRecipe(recipeId) {
+  let url = `${BASE_URL}/recipes/${recipeId}`;
+  const response = await fetch(url, {
+    method: 'GET'
+  });
+  const data = await response.json();
+  return data;
+}
+
 async function createRecipe(data) {
   let url = `${BASE_URL}/recipes`;
-
-  console.log(JSON.stringify(data))
-
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -105,6 +133,20 @@ async function createRecipe(data) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
+  });
+
+  return response.json();
+}
+
+async function editRecipe(recipe) {
+  let url = `${BASE_URL}/recipes/${recipe.id}`;
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(recipe)
   });
 
   return response.json();
